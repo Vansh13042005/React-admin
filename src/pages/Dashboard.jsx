@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { FileText, MessageSquare, Zap } from "lucide-react";
 import Card from "../components/UI/Card";
 import StatCard from "../components/UI/StatCard";
@@ -6,35 +6,37 @@ import StatCard from "../components/UI/StatCard";
 const Dashboard = () => {
   const [dashboard, setDashboard] = useState(null);
   const [loading, setLoading] = useState(true);
-
+const token = localStorage.getItem("token");
   useEffect(() => {
-    const fetchDashboard = async () => {
-      try {
-        const res = await fetch(
-          "https://mysql-wwbk.onrender.com/api/dashboard",
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`, // ✅ dynamic token
-            },
-          }
-        );
-
-        const data = await res.json();
-
-        if (data.success) {
-          setDashboard(data.data);
+  const fetchDashboard = async () => {
+    try {
+      const res = await fetch(
+        "https://mysql-wwbk.onrender.com/api/dashboard",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         }
-      } catch (error) {
-        console.log("Dashboard Error:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+      );
 
+      const data = await res.json();
+
+      if (data.success) {
+        setDashboard(data.data);
+      }
+    } catch (error) {
+      console.log("Dashboard Error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (token) {
     fetchDashboard();
-  }, []);
+  }
+}, [token]); // ✅ FIX
 
   if (loading) {
     return <p className="text-center mt-10">Loading Dashboard...</p>;
