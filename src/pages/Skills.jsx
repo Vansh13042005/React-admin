@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Plus, Edit2, Trash2, ChevronDown, Search, X } from "lucide-react";
 import { useToast } from "../context/ToastContext";
 import Card from "../components/UI/Card";
@@ -540,21 +540,23 @@ const SkillsPage = () => {
   const token = localStorage.getItem("token");
 
   // ─── Fetch ───────────────────────────────────
-  const fetchSkills = async () => {
-    try {
-      const res = await fetch("https://profolionode.vanshpatel.in/api/skills", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
-      setSkills(data.data || []);
-    } catch (err) {
-      console.log(err);
-    }
-  };
+// Remove the unused Card import
 
-  useEffect(() => {
-    fetchSkills();
-  }, []);
+const fetchSkills = useCallback(async () => {
+  try {
+    const res = await fetch("https://profolionode.vanshpatel.in/api/skills", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await res.json();
+    setSkills(data.data || []);
+  } catch (err) {
+    console.log(err);
+  }
+}, [token]);
+
+useEffect(() => {
+  fetchSkills();
+}, [fetchSkills]);
 
   // ─── Open Modal ───────────────────────────────
   const handleOpenModal = (skill = null) => {

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import {
   Upload,
   Trash2,
@@ -50,24 +50,23 @@ const ResumePage = () => {
   const headers = { Authorization: `Bearer ${token}` };
 
   // ── Fetch current resume ────────────────────────────────────────────────
-  const fetchResume = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(API, { headers });
-      const data = await res.json();
-      // API may return single object or array — handle both
-      const item = Array.isArray(data.data) ? data.data[0] : data.data;
-      setResume(item || null);
-    } catch {
-      setResume(null);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const fetchResume = useCallback(async () => {
+  setLoading(true);
+  try {
+    const res = await fetch(API, { headers });
+    const data = await res.json();
+    const item = Array.isArray(data.data) ? data.data[0] : data.data;
+    setResume(item || null);
+  } catch {
+    setResume(null);
+  } finally {
+    setLoading(false);
+  }
+}, [headers]); // or [token] if you inline the header
 
-  useEffect(() => {
-    fetchResume();
-  }, []);
+useEffect(() => {
+  fetchResume();
+}, [fetchResume]);
 
   // ── File selection ──────────────────────────────────────────────────────
   const handleFileSelect = (selectedFile) => {

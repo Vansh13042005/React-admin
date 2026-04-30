@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Plus, Edit2, Trash2, Eye, Image, X } from "lucide-react";
 import { useToast } from "../context/ToastContext";
 import Card from "../components/UI/Card";
@@ -50,25 +50,25 @@ const ProjectsPage = () => {
   };
 
   // ── GET Projects ────────────────────────────────────────────────────────────
-  const fetchProjects = async () => {
-    try {
-      const res = await fetch("https://profolionode.vanshpatel.in/api/projects", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
-      const fixedData = (data.data || []).map((p) => ({
-        ...p,
-        tech: parseTech(p.tech),
-      }));
-      setProjects(fixedData);
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  const fetchProjects = useCallback(async () => {
+  try {
+    const res = await fetch("https://profolionode.vanshpatel.in/api/projects", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await res.json();
+    const fixedData = (data.data || []).map((p) => ({
+      ...p,
+      tech: parseTech(p.tech),
+    }));
+    setProjects(fixedData);
+  } catch (err) {
+    console.log(err);
+  }
+}, [token]);
 
-  useEffect(() => {
-    fetchProjects();
-  }, []);
+useEffect(() => {
+  fetchProjects();
+}, [fetchProjects]);
 
   // ── Open Modal ──────────────────────────────────────────────────────────────
   const handleOpenModal = (project = null) => {

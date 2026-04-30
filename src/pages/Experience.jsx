@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Plus, Edit2, Trash2 } from "lucide-react";
 import { useToast } from "../context/ToastContext";
 import Card from "../components/UI/Card";
@@ -26,27 +26,22 @@ const ExperiencePage = () => {
   const token = localStorage.getItem("token");
 
   // ✅ GET
-  const fetchExperience = async () => {
-    try {
-      const res = await fetch(
-        "https://profolionode.vanshpatel.in/api/experience",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+  const fetchExperience = useCallback(async () => {
+  try {
+    const res = await fetch("https://profolionode.vanshpatel.in/api/experience", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await res.json();
+    setExperience(data.data || []);
+  } catch (err) {
+    console.log(err);
+  }
+}, [token]);
 
-      const data = await res.json();
-      setExperience(data.data || []);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  useEffect(() => {
-    fetchExperience();
-  }, []);
+// Update useEffect
+useEffect(() => {
+  fetchExperience();
+}, [fetchExperience]);
 
   // ✅ OPEN MODAL
   const handleOpenModal = (exp = null) => {

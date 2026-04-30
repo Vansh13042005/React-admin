@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Trash2, Mail } from "lucide-react";
 import { useToast } from "../context/ToastContext";
 import Card from "../components/UI/Card";
@@ -16,27 +16,21 @@ const MessagesPage = () => {
   const token = localStorage.getItem("token");
 
   // ✅ GET
-  const fetchMessages = async () => {
-    try {
-      const res = await fetch(
-        "https://profolionode.vanshpatel.in/api/messages",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+  const fetchMessages = useCallback(async () => {
+  try {
+    const res = await fetch("https://profolionode.vanshpatel.in/api/messages", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await res.json();
+    setMessages(data.data || []);
+  } catch (err) {
+    console.log(err);
+  }
+}, [token]);
 
-      const data = await res.json();
-      setMessages(data.data || []);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  useEffect(() => {
-    fetchMessages();
-  }, []);
+useEffect(() => {
+  fetchMessages();
+}, [fetchMessages]);
 
   // ✅ unread count fix
   const unreadCount = messages.filter((m) => !m.is_read).length;
