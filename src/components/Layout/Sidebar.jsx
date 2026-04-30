@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Menu, LogOut, BarChart3, FileText, Zap, Lock, MessageSquare, Settings } from 'lucide-react';
+import { X, LogOut, BarChart3, FileText, Zap, Lock, MessageSquare, Settings, BookOpen } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import Button from '../UI/Button';
 
@@ -7,12 +7,13 @@ const Sidebar = ({ isOpen, onClose, currentPage, onNavigate }) => {
   const { user, logout } = useAuth();
 
   const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
-    { id: 'projects', label: 'Projects', icon: FileText },
-    { id: 'skills', label: 'Skills', icon: Zap },
+    { id: 'dashboard',  label: 'Dashboard',  icon: BarChart3 },
+    { id: 'projects',   label: 'Projects',   icon: FileText },
+    { id: 'skills',     label: 'Skills',     icon: Zap },
     { id: 'experience', label: 'Experience', icon: Lock },
-    { id: 'messages', label: 'Messages', icon: MessageSquare },
-    { id: 'settings', label: 'Settings', icon: Settings },
+    { id: 'resume',     label: 'Resume',     icon: BookOpen },
+    { id: 'messages',   label: 'Messages',   icon: MessageSquare },
+    { id: 'settings',   label: 'Settings',   icon: Settings },
   ];
 
   const handleNavigate = (id) => {
@@ -23,21 +24,21 @@ const Sidebar = ({ isOpen, onClose, currentPage, onNavigate }) => {
   return (
     <>
       {isOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 md:hidden z-30" 
+        <div
+          className="fixed inset-0 bg-black/50 md:hidden z-30"
           onClick={onClose}
           aria-hidden="true"
         />
       )}
-      
+
       <aside className={`
-        fixed md:static left-0 top-0 h-screen w-64 
-        bg-white dark:bg-gray-950 
-        border-r border-gray-200 dark:border-gray-800 
-        transform transition-transform duration-300 z-40 
+        fixed md:static left-0 top-0 h-screen w-64
+        bg-white dark:bg-gray-950
+        border-r border-gray-200 dark:border-gray-800
+        transform transition-transform duration-300 z-40
         ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
-        {/* Logo Section */}
+        {/* Logo */}
         <div className="p-6 border-b border-gray-200 dark:border-gray-800">
           <div className="flex items-center justify-between">
             <div>
@@ -46,7 +47,7 @@ const Sidebar = ({ isOpen, onClose, currentPage, onNavigate }) => {
               </h1>
               <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Admin Panel</p>
             </div>
-            <button 
+            <button
               onClick={onClose}
               className="md:hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
               aria-label="Close sidebar"
@@ -56,18 +57,17 @@ const Sidebar = ({ isOpen, onClose, currentPage, onNavigate }) => {
           </div>
         </div>
 
-        {/* Navigation Menu */}
+        {/* Navigation */}
         <nav className="p-6 space-y-2 flex-1 overflow-y-auto">
           {menuItems.map(item => {
             const Icon = item.icon;
             const isActive = currentPage === item.id;
-            
             return (
               <button
                 key={item.id}
                 onClick={() => handleNavigate(item.id)}
                 className={`
-                  w-full flex items-center gap-3 px-4 py-3 rounded-lg 
+                  w-full flex items-center gap-3 px-4 py-3 rounded-lg
                   transition-all duration-300
                   ${isActive
                     ? 'bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 border-l-4 border-blue-600'
@@ -98,11 +98,11 @@ const Sidebar = ({ isOpen, onClose, currentPage, onNavigate }) => {
                   </p>
                 </div>
               </div>
-              <Button 
-                variant="ghost" 
-                size="md" 
+              <Button
+                variant="ghost"
+                size="md"
                 onClick={logout}
-                className="w-full justify-center dark:text-white "
+                className="w-full justify-center dark:text-white"
               >
                 <LogOut size={18} />
                 Logout

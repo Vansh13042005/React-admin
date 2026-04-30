@@ -8,6 +8,7 @@ import Dashboard from './Dashboard';
 import ProjectsPage from './Projects';
 import SkillsPage from './Skills';
 import ExperiencePage from './Experience';
+import ResumePage from './ResumePage';
 import MessagesPage from './Messages';
 import SettingsPage from './Settings';
 
@@ -39,6 +40,7 @@ const AdminDashboard = () => {
     projects: { title: 'Projects', component: ProjectsPage },
     skills: { title: 'Skills', component: SkillsPage },
     experience: { title: 'Experience & Education', component: ExperiencePage },
+    resume: { title: 'Resume', component: ResumePage },
     messages: { title: 'Messages', component: MessagesPage },
     settings: { title: 'Settings', component: SettingsPage },
   };
