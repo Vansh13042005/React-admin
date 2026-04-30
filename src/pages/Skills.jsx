@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Plus, Edit2, Trash2, ChevronDown, Search, X } from "lucide-react";
 import { useToast } from "../context/ToastContext";
-import Card from "../components/UI/Card";
+// ✅ Card import removed — was never used
 import Button from "../components/UI/Button";
 import Modal from "../components/UI/Modal";
 import ConfirmModal from "../components/UI/ConfirmModal";
@@ -103,14 +103,12 @@ const IconPicker = ({ value, onChange }) => {
       t.category.toLowerCase().includes(search.toLowerCase())
   );
 
-  // Group filtered icons by category
   const grouped = filtered.reduce((acc, icon) => {
     if (!acc[icon.category]) acc[icon.category] = [];
     acc[icon.category].push(icon);
     return acc;
   }, {});
 
-  // Close on outside click
   useEffect(() => {
     const handleClick = (e) => {
       if (ref.current && !ref.current.contains(e.target)) {
@@ -123,7 +121,6 @@ const IconPicker = ({ value, onChange }) => {
 
   return (
     <div ref={ref} style={{ position: "relative", marginBottom: "16px" }}>
-      {/* Label */}
       <label
         style={{
           display: "block",
@@ -136,7 +133,6 @@ const IconPicker = ({ value, onChange }) => {
         Icon <span style={{ color: "#ef4444" }}>*</span>
       </label>
 
-      {/* Trigger Button */}
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
@@ -196,7 +192,6 @@ const IconPicker = ({ value, onChange }) => {
         </span>
       </button>
 
-      {/* Dropdown Panel */}
       {open && (
         <div
           style={{
@@ -212,7 +207,6 @@ const IconPicker = ({ value, onChange }) => {
             overflow: "hidden",
           }}
         >
-          {/* Search */}
           <div
             style={{
               padding: "10px 12px",
@@ -239,7 +233,6 @@ const IconPicker = ({ value, onChange }) => {
             />
           </div>
 
-          {/* Scrollable icon list */}
           <div style={{ maxHeight: "260px", overflowY: "auto", padding: "8px 0" }}>
             {Object.keys(grouped).length === 0 ? (
               <p style={{ padding: "16px", textAlign: "center", color: "#64748b", fontSize: "13px" }}>
@@ -344,7 +337,6 @@ const IconPicker = ({ value, onChange }) => {
 const SkillCard = ({ skill, onEdit, onDelete }) => {
   const tech = TECH_ICONS.find((t) => t.value === skill.icon);
 
-  // Color accent based on percentage
   const getColor = (pct) => {
     if (pct >= 80) return "#22c55e";
     if (pct >= 60) return "#3b82f6";
@@ -375,10 +367,8 @@ const SkillCard = ({ skill, onEdit, onDelete }) => {
         e.currentTarget.style.boxShadow = "none";
       }}
     >
-      {/* Top Row */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "14px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-          {/* Icon */}
           <div
             style={{
               width: "46px",
@@ -409,7 +399,6 @@ const SkillCard = ({ skill, onEdit, onDelete }) => {
             )}
           </div>
 
-          {/* Name + Category */}
           <div>
             <h3 style={{ margin: 0, fontSize: "15px", fontWeight: 600, color: "#f1f5f9" }}>
               {skill.name}
@@ -432,7 +421,6 @@ const SkillCard = ({ skill, onEdit, onDelete }) => {
           </div>
         </div>
 
-        {/* Actions */}
         <div style={{ display: "flex", gap: "6px" }}>
           <button
             onClick={() => onEdit(skill)}
@@ -485,7 +473,6 @@ const SkillCard = ({ skill, onEdit, onDelete }) => {
         </div>
       </div>
 
-      {/* Progress */}
       <div>
         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "6px" }}>
           <span style={{ fontSize: "12px", color: "#64748b" }}>Proficiency</span>
@@ -523,11 +510,11 @@ const SkillCard = ({ skill, onEdit, onDelete }) => {
 const SkillsPage = () => {
   const { addToast } = useToast();
 
-  const [skills, setSkills]           = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingId, setEditingId]     = useState(null);
-  const [confirmDelete, setConfirmDelete] = useState(null);
-  const [isLoading, setIsLoading]     = useState(false);
+  const [skills, setSkills]                 = useState([]);
+  const [isModalOpen, setIsModalOpen]       = useState(false);
+  const [editingId, setEditingId]           = useState(null);
+  const [confirmDelete, setConfirmDelete]   = useState(null);
+  const [isLoading, setIsLoading]           = useState(false);
   const [filterCategory, setFilterCategory] = useState("All");
 
   const [formData, setFormData] = useState({
@@ -540,23 +527,21 @@ const SkillsPage = () => {
   const token = localStorage.getItem("token");
 
   // ─── Fetch ───────────────────────────────────
-// Remove the unused Card import
+  const fetchSkills = useCallback(async () => {
+    try {
+      const res = await fetch("https://profolionode.vanshpatel.in/api/skills", {
+        headers: { Authorization: `Bearer ${token}` }, // ✅ inside callback
+      });
+      const data = await res.json();
+      setSkills(data.data || []);
+    } catch (err) {
+      console.log(err);
+    }
+  }, [token]); // ✅ only stable primitive as dep
 
-const fetchSkills = useCallback(async () => {
-  try {
-    const res = await fetch("https://profolionode.vanshpatel.in/api/skills", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const data = await res.json();
-    setSkills(data.data || []);
-  } catch (err) {
-    console.log(err);
-  }
-}, [token]);
-
-useEffect(() => {
-  fetchSkills();
-}, [fetchSkills]);
+  useEffect(() => {
+    fetchSkills();
+  }, [fetchSkills]);
 
   // ─── Open Modal ───────────────────────────────
   const handleOpenModal = (skill = null) => {
@@ -630,7 +615,6 @@ useEffect(() => {
   // ─── Render ───────────────────────────────────
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <div>
           <h2 style={{ margin: 0, fontSize: "24px", fontWeight: 700, color: "#f1f5f9" }}>
@@ -645,7 +629,6 @@ useEffect(() => {
         </Button>
       </div>
 
-      {/* Category Filter Tabs */}
       {skills.length > 0 && (
         <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
           {categories.map((cat) => (
@@ -671,7 +654,6 @@ useEffect(() => {
         </div>
       )}
 
-      {/* Skills Grid */}
       {filtered.length === 0 ? (
         <div
           style={{
@@ -703,7 +685,6 @@ useEffect(() => {
         </div>
       )}
 
-      {/* Add/Edit Modal */}
       <Modal
         isOpen={isModalOpen}
         title={editingId ? "Edit Skill" : "Add Skill"}
@@ -734,7 +715,6 @@ useEffect(() => {
           ]}
         />
 
-        {/* Icon Picker */}
         <IconPicker
           value={formData.icon}
           onChange={(val) => {
@@ -742,15 +722,12 @@ useEffect(() => {
             setFormData({
               ...formData,
               icon: val,
-              // Auto-fill name if empty
               name: formData.name || (tech ? tech.label : ""),
-              // Auto-fill category if empty
               category: formData.category || (tech ? tech.category : ""),
             });
           }}
         />
 
-        {/* Percentage Slider */}
         <div style={{ marginBottom: "16px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "6px" }}>
             <label style={{ fontSize: "14px", fontWeight: 500, color: "#94a3b8" }}>
@@ -772,18 +749,15 @@ useEffect(() => {
             style={{ width: "100%", accentColor: "#3b82f6", cursor: "pointer" }}
           />
           <div style={{ display: "flex", justifyContent: "space-between", marginTop: "4px" }}>
-            {["Beginner", "Basic", "Intermediate", "Advanced", "Expert"].map(
-              (label, i) => (
-                <span key={label} style={{ fontSize: "10px", color: "#475569" }}>
-                  {label}
-                </span>
-              )
-            )}
+            {["Beginner", "Basic", "Intermediate", "Advanced", "Expert"].map((label) => (
+              <span key={label} style={{ fontSize: "10px", color: "#475569" }}>
+                {label}
+              </span>
+            ))}
           </div>
         </div>
       </Modal>
 
-      {/* Confirm Delete Modal */}
       <ConfirmModal
         isOpen={confirmDelete !== null}
         onConfirm={handleDelete}

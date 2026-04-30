@@ -35,38 +35,39 @@ const ResumePage = () => {
   const { addToast } = useToast();
   const fileInputRef = useRef(null);
 
-  const [resume, setResume]         = useState(null);   // current resume from API
-  const [loading, setLoading]       = useState(true);
-  const [uploading, setUploading]   = useState(false);
-  const [deleting, setDeleting]     = useState(false);
-  const [dragOver, setDragOver]     = useState(false);
+  const [resume, setResume]       = useState(null);
+  const [loading, setLoading]     = useState(true);
+  const [uploading, setUploading] = useState(false);
+  const [deleting, setDeleting]   = useState(false);
+  const [dragOver, setDragOver]   = useState(false);
 
   // Form state
-  const [title, setTitle]           = useState("");
-  const [file, setFile]             = useState(null);   // File object
-  const [preview, setPreview]       = useState(null);   // local object URL
+  const [title, setTitle]     = useState("");
+  const [file, setFile]       = useState(null);
+  const [preview, setPreview] = useState(null);
 
   const token = localStorage.getItem("token");
-  const headers = { Authorization: `Bearer ${token}` };
 
   // ── Fetch current resume ────────────────────────────────────────────────
   const fetchResume = useCallback(async () => {
-  setLoading(true);
-  try {
-    const res = await fetch(API, { headers });
-    const data = await res.json();
-    const item = Array.isArray(data.data) ? data.data[0] : data.data;
-    setResume(item || null);
-  } catch {
-    setResume(null);
-  } finally {
-    setLoading(false);
-  }
-}, [headers]); // or [token] if you inline the header
+    setLoading(true);
+    try {
+      const res = await fetch(API, {
+        headers: { Authorization: `Bearer ${token}` }, // ✅ inside callback, not a dep
+      });
+      const data = await res.json();
+      const item = Array.isArray(data.data) ? data.data[0] : data.data;
+      setResume(item || null);
+    } catch {
+      setResume(null);
+    } finally {
+      setLoading(false);
+    }
+  }, [token]); // ✅ only token as dep — stable primitive
 
-useEffect(() => {
-  fetchResume();
-}, [fetchResume]);
+  useEffect(() => {
+    fetchResume();
+  }, [fetchResume]);
 
   // ── File selection ──────────────────────────────────────────────────────
   const handleFileSelect = (selectedFile) => {
@@ -103,14 +104,13 @@ useEffect(() => {
 
       const res = await fetch(API, {
         method: "POST",
-        headers,          // ⚠️ do NOT set Content-Type — browser sets it with boundary
+        headers: { Authorization: `Bearer ${token}` }, // ✅ inline here too
         body: formData,
       });
 
       if (!res.ok) throw new Error("Upload failed");
       addToast("Resume uploaded successfully", "success");
 
-      // Reset form
       setFile(null);
       setPreview(null);
       setTitle("");
@@ -130,7 +130,10 @@ useEffect(() => {
 
     setDeleting(true);
     try {
-      await fetch(`${API}/${resume.id}`, { method: "DELETE", headers });
+      await fetch(`${API}/${resume.id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` }, // ✅ inline here too
+      });
       addToast("Resume deleted", "success");
       setResume(null);
     } catch {
