@@ -11,7 +11,7 @@ import ExperiencePage from './Experience';
 import ResumePage from './ResumePage';
 import MessagesPage from './Messages';
 import SettingsPage from './Settings';
-
+import EducationPage from './Education';  
 const AdminDashboard = () => {
   const { user, loading } = useAuth();
   const [currentPage, setCurrentPage] = useState('dashboard');
@@ -40,6 +40,7 @@ const AdminDashboard = () => {
     projects: { title: 'Projects', component: ProjectsPage },
     skills: { title: 'Skills', component: SkillsPage },
     experience: { title: 'Experience & Education', component: ExperiencePage },
+    education: { title: 'Education', component: EducationPage },
     resume: { title: 'Resume', component: ResumePage },
     messages: { title: 'Messages', component: MessagesPage },
     settings: { title: 'Settings', component: SettingsPage },

@@ -13,9 +13,11 @@ const Sidebar = ({ isOpen, onClose, currentPage, onNavigate }) => {
     { id: 'projects', label: 'Projects', icon: FileText },
     { id: 'skills', label: 'Skills', icon: Zap },
     { id: 'experience', label: 'Experience', icon: Lock },
+    { id: 'education', label: 'Education', icon: BookOpen }, // ✅ ADD THIS
     { id: 'resume', label: 'Resume', icon: BookOpen },
     { id: 'messages', label: 'Messages', icon: MessageSquare },
     { id: 'settings', label: 'Settings', icon: Settings },
+
   ];
 
   const handleNavigate = (id) => {
